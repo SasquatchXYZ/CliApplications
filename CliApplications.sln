@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloConsole", "HelloConsole\HelloConsole.csproj", "{6243908E-C618-4443-8DE1-90C1159FB53E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bookmarkr", "Bookmarkr\Bookmarkr.csproj", "{6EE10638-860C-4288-BF7D-23D9E6A522E3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{6243908E-C618-4443-8DE1-90C1159FB53E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6243908E-C618-4443-8DE1-90C1159FB53E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6243908E-C618-4443-8DE1-90C1159FB53E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EE10638-860C-4288-BF7D-23D9E6A522E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EE10638-860C-4288-BF7D-23D9E6A522E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EE10638-860C-4288-BF7D-23D9E6A522E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EE10638-860C-4288-BF7D-23D9E6A522E3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
