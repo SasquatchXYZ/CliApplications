@@ -1,29 +1,48 @@
 using static Bookmarkr.Utilities.Helper;
+using System.CommandLine;
+using System.CommandLine.Builder;
+using System.CommandLine.Parsing;
 using Bookmarkr.Services;
 
 namespace Bookmarkr;
 
 class Program
 {
-    private static void Main(string[]? args)
+    private static async Task<int> Main(string[] args)
     {
-        if (args is null || args.Length == 0)
+        var rootCommand = new RootCommand("Bookmarkr is a bookmark manager provided as a CLI application.")
         {
-            ShowErrorMessage(["You haven't passed any argument.  The expected syntax is:", "bookmarkr <command-name> <parameters>"]);
-            return;
-        }
+        };
 
-        var service = new BookmarkService();
+        rootCommand.SetHandler(OnHandleRootCommand);
 
-        switch (args[0].ToLower())
+        var parser = new CommandLineBuilder(rootCommand)
+            .UseDefaults()
+            .Build();
+
+        return await parser.InvokeAsync(args);
+
+        // if (args is null || args.Length == 0)
+        // {
+        //     ShowErrorMessage(["You haven't passed any argument.  The expected syntax is:", "bookmarkr <command-name> <parameters>"]);
+        //     return;
+        // }
+        //
+        // var service = new BookmarkService();
+        //
+        // switch (args[0].ToLower())
+        // {
+        //     case "link":
+        //         ManageLinks(args, service);
+        //         break;
+        //     // We may add more commands here...
+        //     default:
+        //         ShowErrorMessage(["Unknown Command"]);
+        //         break;
+        // }
+        static void OnHandleRootCommand()
         {
-            case "link":
-                ManageLinks(args, service);
-                break;
-            // We may add more commands here...
-            default:
-                ShowErrorMessage(["Unknown Command"]);
-                break;
+            Console.WriteLine("Hello from the root command!");
         }
     }
 
