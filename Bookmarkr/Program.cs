@@ -46,6 +46,15 @@ class Program
 
         addLinkCommand.SetHandler(OnHandleAddLinkCommand, nameOption, urlOption);
 
+        var removeLinkCommand = new Command("remove", "Removes a bookmark link by name")
+        {
+            nameOption
+        };
+
+        linkCommand.AddCommand(removeLinkCommand);
+
+        removeLinkCommand.SetHandler(OnHandleRemoveLinkCommand, nameOption);
+
         var parser = new CommandLineBuilder(rootCommand)
             .UseDefaults()
             .Build();
@@ -61,6 +70,11 @@ class Program
         static void OnHandleAddLinkCommand(string name, string url)
         {
             _bookmarkService.AddLink(name, url);
+        }
+
+        static void OnHandleRemoveLinkCommand(string name)
+        {
+            _bookmarkService.RemoveLink(name);
         }
     }
 }
