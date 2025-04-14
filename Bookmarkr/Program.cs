@@ -18,12 +18,22 @@ class Program
 
         rootCommand.SetHandler(OnHandleRootCommand);
 
+        var listOption = new Option<string>(
+            ["--list", "-l"],
+            "Print all saved bookmarks"
+        )
+        {
+            Arity = ArgumentArity.Zero,
+        };
+
         // The Link Command
         var linkCommand = new Command("link", "Manage bookmarks links")
         {
+            listOption
         };
 
         rootCommand.AddCommand(linkCommand);
+        linkCommand.SetHandler(OnHandleListLinksCommand);
 
         // Add Options for the Link Command
         var nameOption = new Option<string>(
@@ -92,6 +102,11 @@ class Program
         static void OnHandleUpdateLinkCommand(string name, string url)
         {
             _bookmarkService.UpdateLink(name, url);
+        }
+
+        static void OnHandleListLinksCommand()
+        {
+            _bookmarkService.ListLinks();
         }
     }
 }

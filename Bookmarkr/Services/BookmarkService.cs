@@ -86,4 +86,20 @@ public class BookmarkService
 
         ShowSuccessMessage(["Bookmark updated successfully."]);
     }
+
+    public void ListLinks()
+    {
+        if (_bookmarks.Count == 0)
+        {
+            ShowWarningMessage(["No bookmarks found."]);
+            return;
+        }
+
+        _bookmarks.ForEach(PrintLink);
+    }
+
+    private static void PrintLink(Bookmark bookmark)
+    {
+        Console.WriteLine($"# {bookmark.Name}\n{bookmark.Url}");
+    }
 }
