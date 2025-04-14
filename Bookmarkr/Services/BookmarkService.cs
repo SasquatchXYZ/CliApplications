@@ -58,4 +58,32 @@ public class BookmarkService
         _bookmarks.RemoveAt(index);
         ShowSuccessMessage(["Bookmark successfully removed."]);
     }
+
+    public void UpdateLink(string name, string url)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            ShowErrorMessage(["The 'name' for the link is not provided.  The expected syntax is:", "bookmarkr link update <name> <url>"]);
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(url))
+        {
+            ShowErrorMessage(["The 'url' for the link is not provided.  The expected syntax is:", "bookmarkr link update <name> <url>"]);
+            return;
+        }
+
+
+        var index = _bookmarks.FindIndex(bookmark => bookmark.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+
+        if (index == -1)
+        {
+            ShowWarningMessage([$"No bookmark with the name '{name}' exists."]);
+            return;
+        }
+
+        _bookmarks[index].Url = url;
+
+        ShowSuccessMessage(["Bookmark updated successfully."]);
+    }
 }

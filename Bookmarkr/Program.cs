@@ -25,7 +25,7 @@ class Program
 
         rootCommand.AddCommand(linkCommand);
 
-        // The Add Command
+        // Add Options for the Link Command
         var nameOption = new Option<string>(
             ["--name", "-n"],
             "The name of the bookmark"
@@ -36,6 +36,7 @@ class Program
             "The Url of the bookmark"
         );
 
+        // The Add Command
         var addLinkCommand = new Command("add", "Add a new bookmark link")
         {
             nameOption,
@@ -46,6 +47,7 @@ class Program
 
         addLinkCommand.SetHandler(OnHandleAddLinkCommand, nameOption, urlOption);
 
+        // The Remove Command
         var removeLinkCommand = new Command("remove", "Removes a bookmark link by name")
         {
             nameOption
@@ -54,6 +56,16 @@ class Program
         linkCommand.AddCommand(removeLinkCommand);
 
         removeLinkCommand.SetHandler(OnHandleRemoveLinkCommand, nameOption);
+
+        // The Update Command
+        var updateLinkCommand = new Command("update", "Update a bookmark link")
+        {
+            nameOption,
+            urlOption
+        };
+
+        linkCommand.AddCommand(updateLinkCommand);
+        updateLinkCommand.SetHandler(OnHandleUpdateLinkCommand, nameOption, urlOption);
 
         var parser = new CommandLineBuilder(rootCommand)
             .UseDefaults()
@@ -75,6 +87,11 @@ class Program
         static void OnHandleRemoveLinkCommand(string name)
         {
             _bookmarkService.RemoveLink(name);
+        }
+
+        static void OnHandleUpdateLinkCommand(string name, string url)
+        {
+            _bookmarkService.UpdateLink(name, url);
         }
     }
 }
