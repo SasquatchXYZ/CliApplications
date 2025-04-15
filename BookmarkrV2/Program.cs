@@ -50,7 +50,8 @@ class Program
             IsRequired = false,
         };
 
-        categoryOption.SetDefaultValue("Read later");
+        categoryOption.SetDefaultValue("Read Later");
+        categoryOption.FromAmong("Read Later", "Tech Books", "Cooking", "Social Media");
 
         // The Add Command
         var addLinkCommand = new Command("add", "Add a new bookmark link")
