@@ -42,6 +42,18 @@ class Program
             IsRequired = true,
         };
 
+        urlOption.AddValidator(result =>
+        {
+            if (result.Tokens.Count == 0)
+            {
+                result.ErrorMessage = "The Url is required";
+            }
+            else if (!Uri.TryCreate(result.Tokens[0].Value, UriKind.Absolute, out _))
+            {
+                result.ErrorMessage = "The Url is invalid";
+            }
+        });
+
         var categoryOption = new Option<string>(
             ["--category", "-c"],
             "The category to which the bookmark is associated."
