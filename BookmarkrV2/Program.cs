@@ -51,12 +51,13 @@ class Program
         var addLinkCommand = new Command("add", "Add a new bookmark link")
         {
             nameOption,
-            urlOption
+            urlOption,
+            categoryOption,
         };
 
         linkCommand.AddCommand(addLinkCommand);
 
-        addLinkCommand.SetHandler(OnHandleAddLinkCommand, nameOption, urlOption);
+        addLinkCommand.SetHandler(OnHandleAddLinkCommand, nameOption, urlOption, categoryOption);
 
         var parser = new CommandLineBuilder(rootCommand)
             .UseDefaults()
@@ -70,9 +71,9 @@ class Program
             Console.WriteLine("Hello from the root command!");
         }
 
-        static void OnHandleAddLinkCommand(string name, string url)
+        static void OnHandleAddLinkCommand(string name, string url, string category)
         {
-            _bookmarkService.AddLink(name, url);
+            _bookmarkService.AddLink(name, url, category);
         }
     }
 }

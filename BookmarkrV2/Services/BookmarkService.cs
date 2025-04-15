@@ -7,7 +7,7 @@ public class BookmarkService
 {
     private readonly List<Bookmark> _bookmarks = [];
 
-    public void AddLink(string name, string url)
+    public void AddLink(string name, string url, string category)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -33,7 +33,8 @@ public class BookmarkService
         _bookmarks.Add(new Bookmark
         {
             Name = name,
-            Url = url
+            Url = url,
+            Category = category,
         });
 
         ShowSuccessMessage(["Bookmark added successfully."]);
