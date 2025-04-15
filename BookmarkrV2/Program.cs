@@ -29,12 +29,23 @@ class Program
         var nameOption = new Option<string>(
             ["--name", "-n"],
             "The name of the bookmark"
-        );
+        )
+        {
+            IsRequired = true,
+        };
 
         var urlOption = new Option<string>(
             ["--url", "-u"],
             "The Url of the bookmark"
-        );
+        )
+        {
+            IsRequired = true,
+        };
+
+        var categoryOption = new Option<string>(
+            ["--category", "-c"],
+            "The category to which the bookmark is associated."
+            );
 
         // The Add Command
         var addLinkCommand = new Command("add", "Add a new bookmark link")
