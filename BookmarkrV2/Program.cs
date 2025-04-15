@@ -45,7 +45,12 @@ class Program
         var categoryOption = new Option<string>(
             ["--category", "-c"],
             "The category to which the bookmark is associated."
-            );
+        )
+        {
+            IsRequired = false,
+        };
+
+        categoryOption.SetDefaultValue("Read later");
 
         // The Add Command
         var addLinkCommand = new Command("add", "Add a new bookmark link")
