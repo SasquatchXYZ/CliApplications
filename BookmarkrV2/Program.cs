@@ -26,20 +26,24 @@ class Program
         rootCommand.AddCommand(linkCommand);
 
         // Add Options for the Link Command
-        var nameOption = new Option<string>(
+        var nameOption = new Option<string[]>(
             ["--name", "-n"],
             "The name of the bookmark"
         )
         {
             IsRequired = true,
+            AllowMultipleArgumentsPerToken = true,
+            Arity = ArgumentArity.OneOrMore,
         };
 
-        var urlOption = new Option<string>(
+        var urlOption = new Option<string[]>(
             ["--url", "-u"],
             "The Url of the bookmark"
         )
         {
             IsRequired = true,
+            AllowMultipleArgumentsPerToken = true,
+            Arity = ArgumentArity.OneOrMore,
         };
 
         urlOption.AddValidator(result =>
@@ -54,16 +58,19 @@ class Program
             }
         });
 
-        var categoryOption = new Option<string>(
+        var categoryOption = new Option<string[]>(
             ["--category", "-c"],
             "The category to which the bookmark is associated."
         )
         {
             IsRequired = false,
+            AllowMultipleArgumentsPerToken = true,
+            Arity = ArgumentArity.OneOrMore,
         };
 
         categoryOption.SetDefaultValue("Read Later");
         categoryOption.FromAmong("Read Later", "Tech Books", "Cooking", "Social Media");
+        categoryOption.AddCompletions("Read Later", "Tech Books", "Cooking", "Social Media");
 
         // The Add Command
         var addLinkCommand = new Command("add", "Add a new bookmark link")
@@ -89,9 +96,10 @@ class Program
             Console.WriteLine("Hello from the root command!");
         }
 
-        static void OnHandleAddLinkCommand(string name, string url, string category)
+        static void OnHandleAddLinkCommand(string[] names, string[] urls, string[] categories)
         {
-            _bookmarkService.AddLink(name, url, category);
+            _bookmarkService.AddLinks(names, urls, categories);
+            _bookmarkService.ListAll();
         }
     }
 }

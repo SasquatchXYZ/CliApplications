@@ -40,4 +40,28 @@ public class BookmarkService
         ShowSuccessMessage(["Bookmark added successfully."]);
         Console.WriteLine(_bookmarks.Count);
     }
+
+    public void AddLinks(string[] names, string[] urls, string[] categories)
+    {
+        for (int i = 0; i < names.Length; i++)
+        {
+            if (!_bookmarks.Any(bookmark => bookmark.Name.Equals(names[i], StringComparison.OrdinalIgnoreCase)))
+            {
+                _bookmarks.Add(new Bookmark
+                {
+                    Name = names[i],
+                    Url = urls[i],
+                    Category = categories[i]
+                });
+
+                ShowSuccessMessage(["Bookmark added successfully."]);
+                Console.WriteLine(_bookmarks.Count);
+            }
+        }
+    }
+
+    public void ListAll()
+    {
+        _bookmarks.ForEach(bookmark => Console.WriteLine($"Name: '{bookmark.Name}' | Url: '{bookmark.Url}' | Category: '{bookmark.Category}'"));
+    }
 }
