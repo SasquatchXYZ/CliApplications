@@ -1,6 +1,7 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
+using System.Text.Json;
 using BookmarkrV2.Services;
 
 namespace BookmarkrV2;
@@ -84,6 +85,22 @@ class Program
 
         addLinkCommand.SetHandler(OnHandleAddLinkCommand, nameOption, urlOption, categoryOption);
 
+        var outputFileOption = new Option<FileInfo>(
+            ["--file", "-f"],
+            "The output file that will store the bookmarks"
+        )
+        {
+            IsRequired = true,
+        };
+
+        var exportCommand = new Command("export", "Exports all bookmarks to a designated output file")
+        {
+            outputFileOption,
+        };
+
+        rootCommand.AddCommand(exportCommand);
+        exportCommand.SetHandler(OnExportCommand, outputFileOption);
+
         var parser = new CommandLineBuilder(rootCommand)
             .UseDefaults()
             .Build();
@@ -100,6 +117,17 @@ class Program
         {
             _bookmarkService.AddLinks(names, urls, categories);
             _bookmarkService.ListAll();
+        }
+
+        static void OnExportCommand(FileInfo outputFile)
+        {
+            var bookmarks = _bookmarkService.GetAll();
+            var json = JsonSerializer.Serialize(bookmarks, new JsonSerializerOptions
+            {
+                WriteIndented = true
+            });
+
+            File.WriteAllText(outputFile.FullName, json);
         }
     }
 }

@@ -64,4 +64,9 @@ public class BookmarkService
     {
         _bookmarks.ForEach(bookmark => Console.WriteLine($"Name: '{bookmark.Name}' | Url: '{bookmark.Url}' | Category: '{bookmark.Category}'"));
     }
+
+    public List<Bookmark> GetAll()
+    {
+        return _bookmarks.ToList();
+    }
 }
