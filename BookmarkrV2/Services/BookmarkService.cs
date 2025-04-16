@@ -69,4 +69,16 @@ public class BookmarkService
     {
         return _bookmarks.ToList();
     }
+
+    public void Import(List<Bookmark> bookmarks)
+    {
+        var count = 0;
+        foreach (var bookmark in bookmarks)
+        {
+            _bookmarks.Add(bookmark);
+            count++;
+        }
+
+        ShowSuccessMessage([$"Successfully imported {count} bookmarks."]);
+    }
 }

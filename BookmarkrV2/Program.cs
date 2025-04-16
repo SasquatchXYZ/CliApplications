@@ -2,6 +2,7 @@
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
 using System.Text.Json;
+using BookmarkrV2.Models;
 using BookmarkrV2.Services;
 
 namespace BookmarkrV2;
@@ -13,16 +14,12 @@ class Program
     private static async Task<int> Main(string[] args)
     {
         // The Root Command
-        var rootCommand = new RootCommand("Bookmarkr is a bookmark manager provided as a CLI application.")
-        {
-        };
+        var rootCommand = new RootCommand("Bookmarkr is a bookmark manager provided as a CLI application.");
 
         rootCommand.SetHandler(OnHandleRootCommand);
 
         // The Link Command
-        var linkCommand = new Command("link", "Manage bookmarks links")
-        {
-        };
+        var linkCommand = new Command("link", "Manage bookmarks links");
 
         rootCommand.AddCommand(linkCommand);
 
@@ -103,6 +100,25 @@ class Program
         rootCommand.AddCommand(exportCommand);
         exportCommand.SetHandler(OnExportCommand, outputFileOption);
 
+        var inputFileOption = new Option<FileInfo>(
+            ["--file", "-f"],
+            "The input file that contains the bookmarks to be imported"
+        )
+        {
+            IsRequired = true,
+        };
+
+        inputFileOption.LegalFileNamesOnly();
+        inputFileOption.ExistingOnly();
+
+        var importCommand = new Command("import", "Imports all bookmarks from a designated file")
+        {
+            inputFileOption,
+        };
+
+        rootCommand.AddCommand(importCommand);
+        importCommand.SetHandler(OnImportCommand, inputFileOption);
+
         var parser = new CommandLineBuilder(rootCommand)
             .UseDefaults()
             .Build();
@@ -130,6 +146,13 @@ class Program
             });
 
             File.WriteAllText(outputFile.FullName, json);
+        }
+
+        static void OnImportCommand(FileInfo inputFile)
+        {
+            var json = File.ReadAllText(inputFile.FullName);
+            var bookmarks = JsonSerializer.Deserialize<List<Bookmark>>(json) ?? [];
+            _bookmarkService.Import(bookmarks);
         }
     }
 }
