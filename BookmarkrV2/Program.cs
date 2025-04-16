@@ -93,6 +93,8 @@ class Program
             IsRequired = true,
         };
 
+        outputFileOption.LegalFileNamesOnly();
+
         var exportCommand = new Command("export", "Exports all bookmarks to a designated output file")
         {
             outputFileOption,
