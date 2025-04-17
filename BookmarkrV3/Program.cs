@@ -1,4 +1,5 @@
-﻿using System.CommandLine;
+﻿using static BookmarkrV3.Utilities.Helper;
+using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
 using System.Text.Json;
@@ -98,7 +99,12 @@ class Program
         };
 
         rootCommand.AddCommand(exportCommand);
-        exportCommand.SetHandler(OnExportCommand, outputFileOption);
+        exportCommand.SetHandler(async (context) =>
+        {
+            var outputFileOptionValue = context.ParseResult.GetValueForOption(outputFileOption);
+            var cancellationToken = context.GetCancellationToken();
+            await OnExportCommand(outputFileOptionValue, cancellationToken);
+        });
 
         var inputFileOption = new Option<FileInfo>(
             ["--file", "-f"],
@@ -137,15 +143,46 @@ class Program
             _bookmarkService.ListAll();
         }
 
-        static void OnExportCommand(FileInfo outputFile)
+        static async Task OnExportCommand(FileInfo outputFile, CancellationToken cancellationToken)
         {
-            var bookmarks = _bookmarkService.GetAll();
-            var json = JsonSerializer.Serialize(bookmarks, new JsonSerializerOptions
+            try
             {
-                WriteIndented = true
-            });
+                var bookmarks = _bookmarkService.GetAll();
+                var json = JsonSerializer.Serialize(bookmarks, new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
 
-            File.WriteAllText(outputFile.FullName, json);
+                await File.WriteAllTextAsync(outputFile.FullName, json, cancellationToken);
+            }
+            catch (OperationCanceledException ex)
+            {
+                var requested = ex.CancellationToken.IsCancellationRequested
+                    ? "Cancellation was requested by you."
+                    : "Cancellation was NOT requested by you.";
+
+                ShowWarningMessage(["Operation was cancelled.", requested, $"Cancellation reason: {ex.Message}"]);
+            }
+            catch (JsonException ex)
+            {
+                ShowErrorMessage([$"Failed to serialize bookmarks to JSON.", $"Error message {ex.Message}"]);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                ShowErrorMessage([$"Insufficient permissions to access the file {outputFile.FullName}.", $"Error message {ex.Message}"]);
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                ShowErrorMessage([$"The file {outputFile.FullName} cannot be found due to an invalid path.", $"Error message {ex.Message}"]);
+            }
+            catch (PathTooLongException ex)
+            {
+                ShowErrorMessage([$"The provided path is exceeding the maximum length.", $"Error message {ex.Message}"]);
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage([$"An unknown exception occurred.", $"Error message {ex.Message}"]);
+            }
         }
 
         static void OnImportCommand(FileInfo inputFile)
