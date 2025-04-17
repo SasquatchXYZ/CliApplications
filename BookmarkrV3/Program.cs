@@ -1,10 +1,12 @@
 ﻿using static BookmarkrV3.Utilities.Helper;
 using System.CommandLine;
 using System.CommandLine.Builder;
+using System.CommandLine.Hosting;
 using System.CommandLine.Parsing;
 using System.Text.Json;
 using BookmarkrV3.Models;
 using BookmarkrV3.Services;
+using Microsoft.Extensions.Hosting;
 
 namespace BookmarkrV3;
 
@@ -126,6 +128,8 @@ class Program
         importCommand.SetHandler(OnImportCommand, inputFileOption);
 
         var parser = new CommandLineBuilder(rootCommand)
+            .UseHost(_ => Host.CreateDefaultBuilder(),
+                host => { host.ConfigureServices(services => { }); })
             .UseDefaults()
             .Build();
 
