@@ -7,6 +7,7 @@ using System.Text.Json;
 using BookmarkrV3.Models;
 using BookmarkrV3.Services;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace BookmarkrV3;
 
@@ -129,7 +130,22 @@ class Program
 
         var parser = new CommandLineBuilder(rootCommand)
             .UseHost(_ => Host.CreateDefaultBuilder(),
-                host => { host.ConfigureServices(services => { }); })
+                host =>
+                {
+                    host.ConfigureServices(services =>
+                    {
+                        services.AddSerilog(config =>
+                        {
+                            config.MinimumLevel.Information();
+                            config.WriteTo.Console();
+                            config.WriteTo.File("logs/bookmarkr-.txt",
+                                rollingInterval: RollingInterval.Day,
+                                restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error);
+
+                            config.CreateLogger();
+                        });
+                    });
+                })
             .UseDefaults()
             .Build();
 
