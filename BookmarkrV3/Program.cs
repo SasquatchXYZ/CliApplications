@@ -222,7 +222,20 @@ class Program
         {
             var json = File.ReadAllText(inputFile.FullName);
             var bookmarks = JsonSerializer.Deserialize<List<Bookmark>>(json) ?? [];
-            _bookmarkService.Import(bookmarks);
+
+            foreach (var bookmark in bookmarks)
+            {
+                var conflict = _bookmarkService.Import(bookmark);
+                if (conflict is not null)
+                {
+                    Log.Information(
+                        "{TimeStamp} | Bookmark updated | name changed from '{ConflictOldName}' to '{ConflictNewName}' for Url '{ConflictUrl}'",
+                        DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                        conflict.OldName,
+                        conflict.NewName,
+                        conflict.Url);
+                }
+            }
         }
     }
 }

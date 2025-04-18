@@ -81,4 +81,27 @@ public class BookmarkService
 
         ShowSuccessMessage([$"Successfully imported {count} bookmarks."]);
     }
+
+    public BookmarkConflictModel? Import(Bookmark bookmark)
+    {
+        var conflict = _bookmarks.FirstOrDefault(b =>
+            b.Url.Equals(bookmark.Url, StringComparison.OrdinalIgnoreCase) &&
+            b.Name.Equals(bookmark.Name, StringComparison.OrdinalIgnoreCase));
+
+        if (conflict is not null)
+        {
+            var conflictModel = new BookmarkConflictModel
+            {
+                OldName = conflict.Name,
+                NewName = bookmark.Name,
+                Url = bookmark.Url
+            };
+
+            conflict.Name = bookmark.Name;
+            return conflictModel;
+        }
+
+        _bookmarks.Add(bookmark);
+        return null;
+    }
 }
