@@ -6,6 +6,7 @@ using System.CommandLine.Parsing;
 using System.Text.Json;
 using BookmarkrV3.Models;
 using BookmarkrV3.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
@@ -134,15 +135,27 @@ class Program
                 {
                     host.ConfigureServices(services =>
                     {
+                        // ** Configuration in Code **
+                        // services.AddSerilog(config =>
+                        // {
+                        //     config.MinimumLevel.Information();
+                        //     config.WriteTo.Console();
+                        //     config.WriteTo.File("logs/bookmarkr-.txt",
+                        //         rollingInterval: RollingInterval.Day,
+                        //         restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error);
+                        //
+                        //     config.CreateLogger();
+                        // });
+
+                        // ** Configuration from appsettings.json **
                         services.AddSerilog(config =>
                         {
-                            config.MinimumLevel.Information();
-                            config.WriteTo.Console();
-                            config.WriteTo.File("logs/bookmarkr-.txt",
-                                rollingInterval: RollingInterval.Day,
-                                restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error);
+                            var configuration = new ConfigurationBuilder()
+                                .SetBasePath(Directory.GetCurrentDirectory())
+                                .AddJsonFile("appsettings.json")
+                                .Build();
 
-                            config.CreateLogger();
+                            config.ReadFrom.Configuration(configuration);
                         });
                     });
                 })
