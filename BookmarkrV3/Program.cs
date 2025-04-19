@@ -18,6 +18,8 @@ class Program
 
     private static async Task<int> Main(string[] args)
     {
+        FreeSerilogLoggerOnShutdown();
+
         // The Root Command
         var rootCommand = new RootCommand("Bookmarkr is a bookmark manager provided as a CLI application.");
 
@@ -237,5 +239,17 @@ class Program
                 }
             }
         }
+    }
+
+    private static void FreeSerilogLoggerOnShutdown()
+    {
+        AppDomain.CurrentDomain.ProcessExit += (sender, eventArgs) => ExecuteShutdownTasks();
+        Console.CancelKeyPress += (sender, eventArgs) => ExecuteShutdownTasks();
+    }
+
+    private static void ExecuteShutdownTasks()
+    {
+        Console.WriteLine("Performing shutdown tasks...");
+        Log.CloseAndFlush();
     }
 }

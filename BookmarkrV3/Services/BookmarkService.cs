@@ -1,5 +1,6 @@
 using static BookmarkrV3.Utilities.Helper;
 using BookmarkrV3.Models;
+using Serilog;
 
 namespace BookmarkrV3.Services;
 
