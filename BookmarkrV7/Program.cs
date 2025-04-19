@@ -131,6 +131,10 @@ class Program
         rootCommand.AddCommand(importCommand);
         importCommand.SetHandler(OnImportCommand, inputFileOption);
 
+        var interactiveCommand = new Command("interactive", "Manage bookmarks interactively");
+        rootCommand.AddCommand(interactiveCommand);
+        interactiveCommand.SetHandler(OnInteractiveCommand);
+
         var parser = new CommandLineBuilder(rootCommand)
             .UseHost(_ => Host.CreateDefaultBuilder(),
                 host =>
@@ -238,6 +242,11 @@ class Program
                         conflict.Url);
                 }
             }
+        }
+
+        static void OnInteractiveCommand()
+        {
+
         }
     }
 
