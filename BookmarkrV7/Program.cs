@@ -8,6 +8,7 @@ using BookmarkrV7.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using Spectre.Console;
 using static BookmarkrV7.Utilities.Helper;
 
 namespace BookmarkrV7;
@@ -246,7 +247,7 @@ class Program
 
         static void OnInteractiveCommand()
         {
-
+            AnsiConsole.Write(new FigletText("Bookmarkr").Centered().Color(Color.SteelBlue));
         }
     }
 
