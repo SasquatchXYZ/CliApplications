@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookmarkrV2", "BookmarkrV2\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookmarkrV3", "BookmarkrV3\BookmarkrV3.csproj", "{EDB5B810-C60B-400F-984F-0CAB5FA6A54C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookmarkrV7", "BookmarkrV7\BookmarkrV7.csproj", "{D70E8DA1-DAA9-4718-B6E0-7D2929849AC0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{EDB5B810-C60B-400F-984F-0CAB5FA6A54C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EDB5B810-C60B-400F-984F-0CAB5FA6A54C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EDB5B810-C60B-400F-984F-0CAB5FA6A54C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D70E8DA1-DAA9-4718-B6E0-7D2929849AC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D70E8DA1-DAA9-4718-B6E0-7D2929849AC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D70E8DA1-DAA9-4718-B6E0-7D2929849AC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D70E8DA1-DAA9-4718-B6E0-7D2929849AC0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
