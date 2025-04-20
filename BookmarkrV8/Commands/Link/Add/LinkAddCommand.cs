@@ -51,15 +51,15 @@ public class LinkAddCommand : Command
         });
 
         categoryOption.SetDefaultValue("Read Later");
-        categoryOption.FromAmong("Read Later", "Tech Books", "Cooking", "Social Media");
-        categoryOption.AddCompletions("Read Later", "Tech Books", "Cooking", "Social Media");
+        categoryOption.FromAmong("Read Later", "Tech Books", "Cooking", "Social Media", "Cars");
+        categoryOption.AddCompletions("Read Later", "Tech Books", "Cooking", "Social Media", "Cars");
     }
 
     #endregion
 
     #region Options
 
-    private Option<string[]> nameOption = new Option<string[]>(
+    private Option<string[]> nameOption = new(
         ["--name", "-n"],
         "The name of the bookmark"
     )
@@ -69,7 +69,7 @@ public class LinkAddCommand : Command
         AllowMultipleArgumentsPerToken = true,
     };
 
-    private Option<string[]> urlOption = new Option<string[]>(
+    private Option<string[]> urlOption = new(
         ["--url", "-u"],
         "The Url of the bookmark"
     )
@@ -79,7 +79,7 @@ public class LinkAddCommand : Command
         AllowMultipleArgumentsPerToken = true,
     };
 
-    private Option<string[]> categoryOption = new Option<string[]>(
+    private Option<string[]> categoryOption = new(
         ["--category", "-c"],
         "The category to which the bookmark is associated."
     )

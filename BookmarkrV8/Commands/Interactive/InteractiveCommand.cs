@@ -126,12 +126,18 @@ public class InteractiveCommand : Command
         var root = new Tree("Bookmarks");
 
         // Add some nodes
+        var readLaterCategory = root.AddNode("[yellow]Read Later[/]");
         var techBooksCategory = root.AddNode("[yellow]Tech Books[/]");
         var carsCategory = root.AddNode("[yellow]Cars[/]");
         var socialMediaCategory = root.AddNode("[yellow]Social Media[/]");
         var cookingCategory = root.AddNode("[yellow]Cooking[/]");
 
-        // Add bookmarks for the Tech Books category
+        var readLaterBooks = _bookmarkService.GetBookmarksByCategory("Read Later");
+        foreach (var readLaterBook in readLaterBooks)
+        {
+            readLaterCategory.AddNode($"{readLaterBook.Name} | {readLaterBook.Url}");
+        }
+
         var techBooks = _bookmarkService.GetBookmarksByCategory("Tech Books");
         foreach (var techBook in techBooks)
         {
