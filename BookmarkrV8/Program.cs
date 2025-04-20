@@ -5,8 +5,8 @@ using System.CommandLine.Hosting;
 using System.CommandLine.Parsing;
 using System.Text.Json;
 using BookmarkrV8.Commands.Export;
+using BookmarkrV8.Commands.Import;
 using BookmarkrV8.Commands.Link;
-using BookmarkrV8.Models;
 using BookmarkrV8.Services.BookmarkService;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,26 +35,8 @@ class Program
 
         // Register Subcommands of the Root Command
         rootCommand.AddCommand(new ExportCommand(_bookmarkService, "export", "Exports all bookmarks to a designated output file"));
+        rootCommand.AddCommand(new ImportCommand(_bookmarkService, "import", "Imports all bookmarks from a designated file"));
         rootCommand.AddCommand(new LinkCommand(_bookmarkService, "link", "Manage bookmarks links"));
-
-        var inputFileOption = new Option<FileInfo>(
-            ["--file", "-f"],
-            "The input file that contains the bookmarks to be imported"
-        )
-        {
-            IsRequired = true,
-        };
-
-        inputFileOption.LegalFileNamesOnly();
-        inputFileOption.ExistingOnly();
-
-        var importCommand = new Command("import", "Imports all bookmarks from a designated file")
-        {
-            inputFileOption,
-        };
-
-        rootCommand.AddCommand(importCommand);
-        importCommand.SetHandler(OnImportCommand, inputFileOption);
 
         var interactiveCommand = new Command("interactive", "Manage bookmarks interactively");
         rootCommand.AddCommand(interactiveCommand);
@@ -99,27 +81,6 @@ class Program
         static void OnHandleRootCommand()
         {
             Console.WriteLine("Hello from the root command!");
-        }
-
-
-        void OnImportCommand(FileInfo inputFile)
-        {
-            var json = File.ReadAllText(inputFile.FullName);
-            var bookmarks = JsonSerializer.Deserialize<List<Bookmark>>(json) ?? [];
-
-            foreach (var bookmark in bookmarks)
-            {
-                var conflict = _bookmarkService.Import(bookmark);
-                if (conflict is not null)
-                {
-                    Log.Information(
-                        "{TimeStamp} | Bookmark updated | name changed from '{ConflictOldName}' to '{ConflictNewName}' for Url '{ConflictUrl}'",
-                        DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                        conflict.OldName,
-                        conflict.NewName,
-                        conflict.Url);
-                }
-            }
         }
 
         void OnInteractiveCommand()
