@@ -1,9 +1,9 @@
 using static BookmarkrV8.Utilities.Helper;
 using BookmarkrV8.Models;
 
-namespace BookmarkrV8.Services;
+namespace BookmarkrV8.Services.BookmarkService;
 
-public class BookmarkService
+public class BookmarkService : IBookmarkService
 {
     private readonly List<Bookmark> _bookmarks = new List<Bookmark>
     {
