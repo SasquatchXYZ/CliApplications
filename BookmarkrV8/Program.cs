@@ -5,6 +5,7 @@ using System.CommandLine.Hosting;
 using System.CommandLine.Parsing;
 using System.Text.Json;
 using BookmarkrV8.Commands.Export;
+using BookmarkrV8.Commands.Link;
 using BookmarkrV8.Models;
 using BookmarkrV8.Services.BookmarkService;
 using Microsoft.Extensions.Configuration;
@@ -32,71 +33,9 @@ class Program
 
         _bookmarkService = host.Services.GetRequiredService<IBookmarkService>();
 
-        // The Link Command
-        var linkCommand = new Command("link", "Manage bookmarks links");
-
-        rootCommand.AddCommand(linkCommand);
-
-        // Add Options for the Link Command
-        var nameOption = new Option<string[]>(
-            ["--name", "-n"],
-            "The name of the bookmark"
-        )
-        {
-            IsRequired = true,
-            AllowMultipleArgumentsPerToken = true,
-            Arity = ArgumentArity.OneOrMore,
-        };
-
-        var urlOption = new Option<string[]>(
-            ["--url", "-u"],
-            "The Url of the bookmark"
-        )
-        {
-            IsRequired = true,
-            AllowMultipleArgumentsPerToken = true,
-            Arity = ArgumentArity.OneOrMore,
-        };
-
-        urlOption.AddValidator(result =>
-        {
-            if (result.Tokens.Count == 0)
-            {
-                result.ErrorMessage = "The Url is required";
-            }
-            else if (!Uri.TryCreate(result.Tokens[0].Value, UriKind.Absolute, out _))
-            {
-                result.ErrorMessage = "The Url is invalid";
-            }
-        });
-
-        var categoryOption = new Option<string[]>(
-            ["--category", "-c"],
-            "The category to which the bookmark is associated."
-        )
-        {
-            IsRequired = false,
-            AllowMultipleArgumentsPerToken = true,
-            Arity = ArgumentArity.OneOrMore,
-        };
-
-        categoryOption.SetDefaultValue("Read Later");
-        categoryOption.FromAmong("Read Later", "Tech Books", "Cooking", "Social Media");
-        categoryOption.AddCompletions("Read Later", "Tech Books", "Cooking", "Social Media");
-
-        // The Add Command
-        var addLinkCommand = new Command("add", "Add a new bookmark link")
-        {
-            nameOption,
-            urlOption,
-            categoryOption,
-        };
-
-        linkCommand.AddCommand(addLinkCommand);
-
-        addLinkCommand.SetHandler(OnHandleAddLinkCommand, nameOption, urlOption, categoryOption);
-
+        // Register Subcommands of the Root Command
         rootCommand.AddCommand(new ExportCommand(_bookmarkService, "export", "Exports all bookmarks to a designated output file"));
+        rootCommand.AddCommand(new LinkCommand(_bookmarkService, "link", "Manage bookmarks links"));
 
         var inputFileOption = new Option<FileInfo>(
             ["--file", "-f"],
@@ -160,12 +99,6 @@ class Program
         static void OnHandleRootCommand()
         {
             Console.WriteLine("Hello from the root command!");
-        }
-
-        void OnHandleAddLinkCommand(string[] names, string[] urls, string[] categories)
-        {
-            _bookmarkService.AddLinks(names, urls, categories);
-            _bookmarkService.ListAll();
         }
 
 
