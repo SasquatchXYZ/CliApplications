@@ -1,43 +1,50 @@
+using Spectre.Console;
+
 namespace BookmarkrV7.Utilities;
 
 static class Helper
 {
     public static void ShowErrorMessage(string[] errorMessages)
     {
-        var color = Console.ForegroundColor;
-        Console.ForegroundColor = ConsoleColor.Red;
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
+        AnsiConsole.MarkupLine(
+            Emoji.Known.CrossMark + " [bold red]ERROR[/] :cross_mark:"
+        );
 
         foreach (var message in errorMessages)
         {
-            Console.WriteLine(message);
+            AnsiConsole.MarkupLineInterpolated($"[red]{message}[/]");
         }
-
-        Console.ForegroundColor = color;
     }
 
     public static void ShowWarningMessage(string[] warningMessages)
     {
-        var color = Console.ForegroundColor;
-        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
+        var m = new Markup(
+            Emoji.Known.Warning + " [bold yellow]Warning[/] :warning:"
+        );
 
+        m.Centered();
+        AnsiConsole.Write(m);
+        AnsiConsole.WriteLine();
         foreach (var message in warningMessages)
         {
-            Console.WriteLine(message);
+            AnsiConsole.MarkupLineInterpolated(
+                $"[yellow]{message}[/]"
+            );
         }
-
-        Console.ForegroundColor = color;
     }
 
     public static void ShowSuccessMessage(string[] successMessage)
     {
-        var color = Console.ForegroundColor;
-        Console.ForegroundColor = ConsoleColor.Green;
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
+        AnsiConsole.MarkupLine(
+            Emoji.Known.BeatingHeart + " [bold green]SUCCESS[/] :beating_heart:"
+        );
 
         foreach (var message in successMessage)
         {
-            Console.WriteLine(message);
+            AnsiConsole.MarkupLineInterpolated($"[green]{message}[/]");
         }
-
-        Console.ForegroundColor = color;
     }
 }
