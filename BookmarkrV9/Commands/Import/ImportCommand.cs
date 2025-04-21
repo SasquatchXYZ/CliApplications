@@ -1,4 +1,5 @@
 using System.CommandLine;
+using System.IO.Abstractions;
 using System.Text.Json;
 using BookmarkrV9.Models;
 using BookmarkrV9.Services.BookmarkService;
@@ -12,6 +13,7 @@ public class ImportCommand : Command
     #region Properties
 
     private readonly IBookmarkService _bookmarkService;
+    private readonly IFileSystem _fileSystem;
 
     #endregion
 
@@ -23,6 +25,20 @@ public class ImportCommand : Command
         string? description = null) : base(name, description)
     {
         _bookmarkService = bookmarkService;
+        _fileSystem = new FileSystem();
+
+        AddOption(inputFileOption);
+        this.SetHandler(OnImportCommand, inputFileOption);
+    }
+
+    internal ImportCommand(
+        IBookmarkService bookmarkService,
+        IFileSystem fileSystem,
+        string name,
+        string? description = null) : base(name, description)
+    {
+        _bookmarkService = bookmarkService;
+        _fileSystem = fileSystem;
 
         AddOption(inputFileOption);
         this.SetHandler(OnImportCommand, inputFileOption);
@@ -48,7 +64,7 @@ public class ImportCommand : Command
 
     private void OnImportCommand(FileInfo inputFile)
     {
-        var json = File.ReadAllText(inputFile.FullName);
+        var json = _fileSystem.File.ReadAllText(inputFile.FullName);
         var bookmarks = JsonSerializer.Deserialize<List<Bookmark>>(json) ?? [];
 
         foreach (var bookmark in bookmarks)
@@ -64,6 +80,11 @@ public class ImportCommand : Command
                     conflict.Url);
             }
         }
+    }
+
+    internal void OnImportCommand(IFileInfo fileInfo)
+    {
+        OnImportCommand(new FileInfo(fileInfo.FullName));
     }
 
     #endregion
