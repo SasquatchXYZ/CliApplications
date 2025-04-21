@@ -6,6 +6,7 @@ using BookmarkrV9.Commands.Export;
 using BookmarkrV9.Commands.Import;
 using BookmarkrV9.Commands.Interactive;
 using BookmarkrV9.Commands.Link;
+using BookmarkrV9.Commands.Sync;
 using BookmarkrV9.Services.BookmarkService;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,22 +22,34 @@ class Program
         FreeSerilogLoggerOnShutdown();
 
         IBookmarkService _bookmarkService;
+        IHttpClientFactory _httpClientFactory;
         // The Root Command
         var rootCommand = new RootCommand("Bookmarkr is a bookmark manager provided as a CLI application.");
 
         rootCommand.SetHandler(OnHandleRootCommand);
 
         var host = Host.CreateDefaultBuilder(args)
-            .ConfigureServices((hostContext, services) => { services.AddSingleton<IBookmarkService, BookmarkService>(); })
+            .ConfigureServices((hostContext, services) =>
+            {
+                services.AddSingleton<IBookmarkService, BookmarkService>();
+                services.AddHttpClient("bookmarkrSyncr", client =>
+                {
+                    client.BaseAddress = new Uri("https://bookmarkrsyncr-api.azurewebsites.net");
+                    client.DefaultRequestHeaders.Add("Accept", "application/json");
+                    client.DefaultRequestHeaders.Add("User-Agent", "Bookmarkr");
+                });
+            })
             .Build();
 
         _bookmarkService = host.Services.GetRequiredService<IBookmarkService>();
+        _httpClientFactory = host.Services.GetRequiredService<IHttpClientFactory>();
 
         // Register Subcommands of the Root Command
         rootCommand.AddCommand(new ExportCommand(_bookmarkService, "export", "Exports all bookmarks to a designated output file"));
         rootCommand.AddCommand(new ImportCommand(_bookmarkService, "import", "Imports all bookmarks from a designated file"));
         rootCommand.AddCommand(new LinkCommand(_bookmarkService, "link", "Manage bookmarks links"));
         rootCommand.AddCommand(new InteractiveCommand(_bookmarkService, "interactive", "Manage bookmarks interactively"));
+        rootCommand.AddCommand(new SyncCommand(_httpClientFactory, _bookmarkService, "sync", "Sync local and remote bookmark stores"));
 
         // The Builder Pattern
         var parser = new CommandLineBuilder(rootCommand)
