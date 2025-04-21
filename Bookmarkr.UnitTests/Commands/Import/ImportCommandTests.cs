@@ -9,57 +9,12 @@ namespace Bookmarkr.UnitTests.Commands.Import;
 [TestClass]
 public class ImportCommandTests
 {
-    [TestMethod]
-    public void OnImportCommand_PassingAValidAndExistingFile_CallsImportMethodOnBookmarkService()
+    public required IBookmarkService _bookmarkService;
+    public required MockFileSystem _fileSystemMock;
+
+    [TestInitialize]
+    public void TestInitialize()
     {
-        // Arrange
-        var mockBookmarkService = Substitute.For<IBookmarkService>();
-
-        const string bookmarksAsJson = @"[
-            {
-                ""Name"": ""Packt Publishing"",
-                ""Url"": ""https://packtpub.com/"",
-                ""Category"": ""Tech Books""
-            },
-            {
-                ""Name"": ""Audi Cars"",
-                ""Url"": ""https://www.audi.com/"",
-                ""Category"": ""See Later""
-            },
-            {
-                ""Name"": ""LinkedIn"",
-                ""Url"": ""https://www.linkedin.com/"",
-                ""Category"": ""Social Media""
-            }
-        ]";
-
-        var mockFileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
-        {
-            {
-                @"bookmarks.json", new MockFileData(bookmarksAsJson)
-            }
-        });
-
-        var command = new ImportCommand(mockBookmarkService, mockFileSystem, "import", "Imports all bookmarks from a file");
-
-        // Act
-        command.OnImportCommand(mockFileSystem.FileInfo.New("bookmarks.json"));
-
-        // Assert
-        mockBookmarkService.Received(3).Import(Arg.Any<Bookmark>());
-        mockBookmarkService.Received(1).Import(Arg.Is<Bookmark>(bookmark => bookmark.Name == "Packt Publishing" && bookmark.Url == "https://packtpub.com/"));
-        mockBookmarkService.Received(1).Import(Arg.Is<Bookmark>(bookmark => bookmark.Name == "Audi Cars" && bookmark.Url == "https://www.audi.com/"));
-        mockBookmarkService.Received(1).Import(Arg.Is<Bookmark>(bookmark => bookmark.Name == "LinkedIn" && bookmark.Url == "https://www.linkedin.com/"));
-    }
-
-    [TestMethod]
-    public void OnImportCommand_Conflict_TheNameOfTheConflictingBookmarkIsUpdated()
-    {
-        // Arrange
-        var bookmarkService = new BookmarkService();
-        bookmarkService.ClearAll();
-        bookmarkService.AddLink("Audi Canada", "https://audi.ca", "See Later");
-
         const string bookmarksAsJson = @"[
             {
                 ""Name"": ""Packt Publishing"",
@@ -78,18 +33,46 @@ public class ImportCommandTests
             }
         ]";
 
-        var mockFileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
+        _fileSystemMock = new MockFileSystem(new Dictionary<string, MockFileData>
         {
             {
                 @"bookmarks.json", new MockFileData(bookmarksAsJson)
             }
         });
+    }
 
-        var command = new ImportCommand(bookmarkService, mockFileSystem, "import", "Imports all bookmarks from a file");
+    [TestMethod]
+    public void OnImportCommand_PassingAValidAndExistingFile_CallsImportMethodOnBookmarkService()
+    {
+        // Arrange
+        _bookmarkService = Substitute.For<IBookmarkService>();
+
+
+        var command = new ImportCommand(_bookmarkService, _fileSystemMock, "import", "Imports all bookmarks from a file");
 
         // Act
-        command.OnImportCommand(mockFileSystem.FileInfo.New("bookmarks.json"));
-        var currentBookmarks = bookmarkService.GetAll();
+        command.OnImportCommand(_fileSystemMock.FileInfo.New("bookmarks.json"));
+
+        // Assert
+        _bookmarkService.Received(3).Import(Arg.Any<Bookmark>());
+        _bookmarkService.Received(1).Import(Arg.Is<Bookmark>(bookmark => bookmark.Name == "Packt Publishing" && bookmark.Url == "https://packtpub.com/"));
+        _bookmarkService.Received(1).Import(Arg.Is<Bookmark>(bookmark => bookmark.Name == "Audi Cars" && bookmark.Url == "https://audi.ca"));
+        _bookmarkService.Received(1).Import(Arg.Is<Bookmark>(bookmark => bookmark.Name == "LinkedIn" && bookmark.Url == "https://www.linkedin.com/"));
+    }
+
+    [TestMethod]
+    public void OnImportCommand_Conflict_TheNameOfTheConflictingBookmarkIsUpdated()
+    {
+        // Arrange
+        _bookmarkService = new BookmarkService();
+        _bookmarkService.ClearAll();
+        _bookmarkService.AddLink("Audi Canada", "https://audi.ca", "See Later");
+
+        var command = new ImportCommand(_bookmarkService, _fileSystemMock, "import", "Imports all bookmarks from a file");
+
+        // Act
+        command.OnImportCommand(_fileSystemMock.FileInfo.New("bookmarks.json"));
+        var currentBookmarks = _bookmarkService.GetAll();
 
         // Assert
         Assert.AreEqual(3, currentBookmarks.Count);
