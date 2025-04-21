@@ -189,4 +189,9 @@ public class BookmarkService : IBookmarkService
     {
         return _bookmarks.Where(bookmark => bookmark.Category.Equals(category, StringComparison.OrdinalIgnoreCase)).ToList();
     }
+
+    public void ClearAll()
+    {
+        _bookmarks.Clear();
+    }
 }
