@@ -166,7 +166,7 @@ public class BookmarkService : IBookmarkService
     {
         var conflict = _bookmarks.FirstOrDefault(b =>
             b.Url.Equals(bookmark.Url, StringComparison.OrdinalIgnoreCase) &&
-            b.Name.Equals(bookmark.Name, StringComparison.OrdinalIgnoreCase));
+            !b.Name.Equals(bookmark.Name, StringComparison.OrdinalIgnoreCase));
 
         if (conflict is not null)
         {
