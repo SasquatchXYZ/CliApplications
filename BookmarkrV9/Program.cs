@@ -2,6 +2,7 @@
 using System.CommandLine.Builder;
 using System.CommandLine.Hosting;
 using System.CommandLine.Parsing;
+using System.Diagnostics.CodeAnalysis;
 using BookmarkrV9.Commands.Export;
 using BookmarkrV9.Commands.Import;
 using BookmarkrV9.Commands.Interactive;
@@ -16,6 +17,7 @@ using Serilog;
 
 namespace BookmarkrV9;
 
+[ExcludeFromCodeCoverage(Justification = "CLI application configuration.  No processing is performed in this class.")]
 class Program
 {
     private static async Task<int> Main(string[] args)
