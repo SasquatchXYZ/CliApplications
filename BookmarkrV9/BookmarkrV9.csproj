@@ -18,6 +18,7 @@
         <PackageProjectUrl>https://github.com/SasquatchXYZ/CliApplications</PackageProjectUrl>
         <RepositoryUrl>https://github.com/SasquatchXYZ/CliApplications</RepositoryUrl>
         <PackageTags>.net cli;bookmark manager;.net 9</PackageTags>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
@@ -40,6 +41,12 @@
 
     <ItemGroup>
         <InternalsVisibleTo Include="Bookmarkr.UnitTests"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 
 </Project>
