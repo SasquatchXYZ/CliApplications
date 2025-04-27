@@ -5,6 +5,20 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <PackageId>bookmarkr</PackageId>
+        <Version>1.0.0</Version>
+        <Authors>Dalton Ricker</Authors>
+        <Description>Bookmarkr is a bookmarks manager provided as a CLI application.</Description>
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>bookmarkr</ToolCommandName>
+        <PackageOutputPath>./nupkg</PackageOutputPath>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <Copyright>Dalton Ricker. All rights reserved.</Copyright>
+        <PackageProjectUrl>https://github.com/SasquatchXYZ/CliApplications</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/SasquatchXYZ/CliApplications</RepositoryUrl>
+        <PackageTags>.net cli;bookmark manager;.net 9</PackageTags>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
@@ -20,13 +34,19 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="appsettings.json">
+        <None Update="appsettings.json" Pack="true" PackagePath="\">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
 
     <ItemGroup>
         <InternalsVisibleTo Include="Bookmarkr.UnitTests"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="..\.dockerignore">
+            <Link>.dockerignore</Link>
+        </Content>
     </ItemGroup>
 
 </Project>
