@@ -1,6 +1,6 @@
-using BookmarkrV9.Commands.Link;
-using BookmarkrV9.Commands.Link.Add;
-using BookmarkrV9.Services.BookmarkService;
+using BookmarkrV12.Commands.Link;
+using BookmarkrV12.Commands.Link.Add;
+using BookmarkrV12.Services.BookmarkService;
 using NSubstitute;
 
 namespace Bookmarkr.UnitTests.Commands.Link;

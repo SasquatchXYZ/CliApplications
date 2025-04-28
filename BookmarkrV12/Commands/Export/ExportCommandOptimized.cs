@@ -1,0 +1,91 @@
+using System.CommandLine;
+using System.Text.Json;
+using BookmarkrV12.Services.BookmarkService;
+using static BookmarkrV12.Utilities.Helper;
+
+namespace BookmarkrV12.Commands.Export;
+
+public class ExportCommandOptimized : Command
+{
+
+    #region Properties
+
+    private readonly IBookmarkService _bookmarkService;
+
+    #endregion
+
+    #region Constructor
+
+    public ExportCommandOptimized(IBookmarkService bookmarkService, string name, string? description = null) : base(name, description)
+    {
+        _bookmarkService = bookmarkService;
+
+        AddOption(outputFileOption);
+        this.SetHandler(async context =>
+        {
+            var outputFileOptionValue = context.ParseResult.GetValueForOption(outputFileOption);
+            var cancellationToken = context.GetCancellationToken();
+            await OnExportCommand(outputFileOptionValue, cancellationToken);
+        });
+    }
+
+    #endregion
+
+    #region Options
+
+    private Option<FileInfo> outputFileOption = new Option<FileInfo>(
+        ["--file", "-f"],
+        "The output file that will store the bookmarks"
+    )
+    {
+        IsRequired = true,
+    }.LegalFileNamesOnly();
+
+    #endregion
+
+    #region Handler method
+
+    private async Task OnExportCommand(FileInfo outputFile, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var bookmarks = _bookmarkService.GetAll();
+            await using var fileStream = new FileStream(outputFile.FullName, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true);
+            await JsonSerializer.SerializeAsync(fileStream, bookmarks, new JsonSerializerOptions
+            {
+                WriteIndented = true
+            }, cancellationToken);
+        }
+        catch (OperationCanceledException ex)
+        {
+            var requested = ex.CancellationToken.IsCancellationRequested
+                ? "Cancellation was requested by you."
+                : "Cancellation was NOT requested by you.";
+
+            ShowWarningMessage(["Operation was cancelled.", requested, $"Cancellation reason: {ex.Message}"]);
+        }
+        catch (JsonException ex)
+        {
+            ShowErrorMessage([$"Failed to serialize bookmarks to JSON.", $"Error message {ex.Message}"]);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            ShowErrorMessage([$"Insufficient permissions to access the file {outputFile.FullName}.", $"Error message {ex.Message}"]);
+        }
+        catch (DirectoryNotFoundException ex)
+        {
+            ShowErrorMessage([$"The file {outputFile.FullName} cannot be found due to an invalid path.", $"Error message {ex.Message}"]);
+        }
+        catch (PathTooLongException ex)
+        {
+            ShowErrorMessage([$"The provided path is exceeding the maximum length.", $"Error message {ex.Message}"]);
+        }
+        catch (Exception ex)
+        {
+            ShowErrorMessage([$"An unknown exception occurred.", $"Error message {ex.Message}"]);
+        }
+    }
+
+    #endregion
+
+}
