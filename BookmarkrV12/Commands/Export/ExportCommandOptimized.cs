@@ -50,12 +50,11 @@ public class ExportCommandOptimized : Command
         try
         {
             var bookmarks = _bookmarkService.GetAll();
-            var json = JsonSerializer.Serialize(bookmarks, new JsonSerializerOptions
+            await using var fileStream = new FileStream(outputFile.FullName, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true);
+            await JsonSerializer.SerializeAsync(fileStream, bookmarks, new JsonSerializerOptions
             {
                 WriteIndented = true
-            });
-
-            await File.WriteAllTextAsync(outputFile.FullName, json, cancellationToken);
+            }, cancellationToken);
         }
         catch (OperationCanceledException ex)
         {

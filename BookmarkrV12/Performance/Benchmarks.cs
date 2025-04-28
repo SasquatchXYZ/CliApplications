@@ -25,10 +25,22 @@ public class Benchmarks
 
     #endregion
 
-    [Benchmark]
+    [Benchmark(Baseline = true)]
     public async Task ExportBookmarks()
     {
         var exportCmd = new ExportCommand(_bookmarkService!, "export", "Exports all bookmarks to a file");
+        var exportArgs = new[]
+        {
+            "--file", "bookmarksbench.json"
+        };
+
+        await exportCmd.InvokeAsync(exportArgs);
+    }
+
+    [Benchmark]
+    public async Task ExportBookmarksOptimized()
+    {
+        var exportCmd = new ExportCommandOptimized(_bookmarkService!, "export", "Exports all bookmarks to a file");
         var exportArgs = new[]
         {
             "--file", "bookmarksbench.json"
