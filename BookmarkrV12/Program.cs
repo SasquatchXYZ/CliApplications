@@ -3,11 +3,13 @@ using System.CommandLine.Builder;
 using System.CommandLine.Hosting;
 using System.CommandLine.Parsing;
 using System.Diagnostics.CodeAnalysis;
+using BenchmarkDotNet.Running;
 using BookmarkrV12.Commands.Export;
 using BookmarkrV12.Commands.Import;
 using BookmarkrV12.Commands.Interactive;
 using BookmarkrV12.Commands.Link;
 using BookmarkrV12.Commands.Sync;
+using BookmarkrV12.Performance;
 using BookmarkrV12.ServiceAgents.BookmarkrSyncrServiceAgent;
 using BookmarkrV12.Services.BookmarkService;
 using Microsoft.Extensions.Configuration;
@@ -22,6 +24,13 @@ class Program
 {
     private static async Task<int> Main(string[] args)
     {
+        // Configure BenchmarkDotNet
+        if (args.Length > 0 && args[0].Equals("benchmark", StringComparison.CurrentCultureIgnoreCase))
+        {
+            BenchmarkRunner.Run<Benchmarks>();
+            return 0;
+        }
+
         FreeSerilogLoggerOnShutdown();
 
         IHttpClientFactory _httpClientFactory;
