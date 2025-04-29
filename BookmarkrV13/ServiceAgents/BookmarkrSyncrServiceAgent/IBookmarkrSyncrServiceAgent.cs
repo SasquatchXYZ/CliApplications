@@ -4,5 +4,5 @@ namespace BookmarkrV13.ServiceAgents.BookmarkrSyncrServiceAgent;
 
 public interface IBookmarkrSyncrServiceAgent
 {
-    Task<List<Bookmark>> SyncBookmarks(List<Bookmark> localBookmarks);
+    Task<List<Bookmark>> SyncBookmarks(string accessToken, List<Bookmark> localBookmarks);
 }
